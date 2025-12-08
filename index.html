@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WildWatch</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Poppins, sans-serif;
+      background: #f4f7f8;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(to right, #4caf50, #2e7d32);
+      color: white;
+    }
+
+    .tagline {
+      margin-top: -10px;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      padding: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filters input,
+    .filters select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      font-size: 1rem;
+    }
+
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 1rem;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      color: #2e7d32;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #dcedc8;
+      color: #33691e;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>WildWatch</h1>
+    <p class="tagline">Explore endangered species & their habitats</p>
+  </header>
+
+  <section class="filters">
+    <input type="text" id="searchBar" placeholder="Search species..." />
+
+    <select id="categoryFilter">
+      <option value="all">All Categories</option>
+      <option value="mammal">Mammals</option>
+      <option value="bird">Birds</option>
+      <option value="reptile">Reptiles</option>
+      <option value="amphibian">Amphibians</option>
+      <option value="fish">Fish</option>
+    </select>
+
+    <select id="regionFilter">
+      <option value="all">All Regions</option>
+      <option value="asia">Asia</option>
+      <option value="africa">Africa</option>
+      <option value="europe">Europe</option>
+      <option value="australia">Australia</option>
+      <option value="america">North/South America</option>
+    </select>
+  </section>
+
+  <section id="speciesContainer" class="species-grid"></section>
+
+  <script>
+    const speciesData = [
+  
+  {
+    name: "Amur Leopard",
+    category: "mammal",
+    region: "asia",
+    img: "https://upload.wikimedia.org/wikipedia/commons/0/0c/Amur_leopard_cub_in_tree.jpg",
+    status: "Critically Endangered"
+  },
+  {
+    name: "African Grey Parrot",
+    category: "bird",
+    region: "africa",
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/38/African_Grey_Parrot_1989.jpg",
+    status: "Endangered"
+  },
+  {
+    name: "Marine Iguana",
+    category: "reptile",
+    region: "america",
+    img: "https://upload.wikimedia.org/wikipedia/commons/4/41/Amblyrhynchus_cristatus_-_Fernandina.jpg",
+    status: "Vulnerable"
+  },
+  {
+    name: "Blue Whale",
+    category: "mammal",
+    region: "all",
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/54/Anim1753_-_Flickr_-_NOAA_Photo_Library.jpg",
+    status: "Endangered"
+  },
+  {
+    name: "Snow Leopard",
+    category: "mammal",
+    region: "asia",
+    img: "https://upload.wikimedia.org/wikipedia/commons/0/09/Irbis4.JPG",
+    status: "Vulnerable"
+  }
+];
+
+
+
+    const container = document.getElementById("speciesContainer");
+    const searchBar = document.getElementById("searchBar");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const regionFilter = document.getElementById("regionFilter");
+
+    function displayCards(list) {
+      container.innerHTML = "";
+      list.forEach(sp => {
+        container.innerHTML += `
+          <div class="card">
+            <img src="${sp.img}" alt="${sp.name}">
+            <div class="card-content">
+              <h3>${sp.name}</h3>
+              <span class="badge">${sp.category}</span>
+              <span class="badge">${sp.region}</span>
+              <p><b>Status:</b> ${sp.status}</p>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function filterSpecies() {
+      let searchText = searchBar.value.toLowerCase();
+      let category = categoryFilter.value;
+      let region = regionFilter.value;
+
+      let filtered = speciesData.filter(sp =>
+        sp.name.toLowerCase().includes(searchText) &&
+        (category === "all" || sp.category === category) &&
+        (region === "all" || sp.region === region)
+      );
+
+      displayCards(filtered);
+    }
+
+    searchBar.addEventListener("input", filterSpecies);
+    categoryFilter.addEventListener("change", filterSpecies);
+    regionFilter.addEventListener("change", filterSpecies);
+
+    displayCards(speciesData);
+  </script>
+
+</body>
+</html>
