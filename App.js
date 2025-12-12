@@ -1,57 +1,54 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import SearchBar from "./components/SearchBar";
+import SpeciesList from "./components/SpeciesList";
 
 function App() {
   const [species, setSpecies] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
+  // Fetch species data from backend
   useEffect(() => {
-    fetch("http://localhost:5000/species")
+    fetch("http://localhost:5000/api/species")
       .then((res) => res.json())
-      .then((data) => setSpecies(data));
+      .then((data) => setSpecies(data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (
-    <div className="container">
-      <h1 className="title">🐾 WildWatch</h1>
-      <p className="subtitle">
-        Explore endangered species, habitats, and conservation efforts.
-      </p>
+    <div className="App">
 
-      <div className="main-layout">
-        {/* Species Cards */}
-        <div className="cards-grid">
-          {species.map((s) => (
-            <div
-              key={s.id}
-              className="species-card"
-              onClick={() => setSelected(s)}
-            >
-              <img src={s.image} alt={s.name} />
-              <div className="card-info">
-                <h3>{s.name}</h3>
-                <p className="status">{s.status}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Homepage Banner */}
+      <header className="hero-section">
+        <h1>WildWatch</h1>
+        <p>Discover endangered species and learn how to protect wildlife.</p>
+      </header>
 
-        {/* Right Panel - Details */}
-        <div className="details-panel">
-          {selected ? (
-            <div>
-              <img src={selected.image} alt="" className="details-img" />
-              <h2>{selected.name}</h2>
-              <p><strong>Status:</strong> {selected.status}</p>
-              <p><strong>Region:</strong> {selected.region}</p>
-              <p><strong>Habitat:</strong> {selected.habitat}</p>
-              <p className="desc">{selected.description}</p>
-            </div>
-          ) : (
-            <p className="placeholder">Select a species to view details</p>
-          )}
-        </div>
+      {/* Search Bar */}
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      {/* Category Filter */}
+      <div className="filter-container">
+        <select
+          className="filter-dropdown"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="All">All Categories</option>
+          <option value="Mammal">Mammals</option>
+          <option value="Bird">Birds</option>
+          <option value="Marine">Marine</option>
+        </select>
       </div>
+
+      {/* Species Cards */}
+      <SpeciesList
+        species={species}
+        searchTerm={searchTerm}
+        selectedCategory={selectedCategory}
+      />
+
     </div>
   );
 }
